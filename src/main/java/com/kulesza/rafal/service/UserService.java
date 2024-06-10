@@ -66,4 +66,14 @@ public class UserService {
 
         return "User is updated successfully";
     }
+
+    public void deleteUser(String id) {
+        UUID uuid = UUID.fromString(id);
+
+        if (!userRepository.existsById(uuid)) {
+            throw new UserDoesNotExistException();
+        }
+
+        userRepository.deleteById(uuid);
+    }
 }
