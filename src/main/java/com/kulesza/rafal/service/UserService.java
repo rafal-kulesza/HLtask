@@ -1,11 +1,14 @@
 package com.kulesza.rafal.service;
 
 import com.kulesza.rafal.exception.InvalidUserDataException;
+import com.kulesza.rafal.exception.UserDoesNotExistException;
 import com.kulesza.rafal.exception.UserIsNotUniqueException;
 import com.kulesza.rafal.model.User;
 import com.kulesza.rafal.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -45,5 +48,11 @@ public class UserService {
         if (userRepository.existsByUsername(username)) {
             throw new UserIsNotUniqueException();
         }
+    }
+
+    public User getUser(String id) {
+        Optional<User> user = userRepository.findById(UUID.fromString(id));
+
+        return user.orElseThrow(UserDoesNotExistException::new);
     }
 }
