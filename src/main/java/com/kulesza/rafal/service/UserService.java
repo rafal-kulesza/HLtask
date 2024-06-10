@@ -55,4 +55,15 @@ public class UserService {
 
         return user.orElseThrow(UserDoesNotExistException::new);
     }
+
+    public String updateUser(User user, String id) {
+        User existingUser = getUser(id);
+        validateUserData(user);
+
+        existingUser.setAge(user.getAge());
+        existingUser.setGender(user.getGender());
+        userRepository.save(user);
+
+        return "User is updated successfully";
+    }
 }
