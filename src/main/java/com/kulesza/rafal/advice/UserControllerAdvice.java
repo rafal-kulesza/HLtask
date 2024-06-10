@@ -1,6 +1,7 @@
 package com.kulesza.rafal.advice;
 
 import com.kulesza.rafal.exception.InvalidUserDataException;
+import com.kulesza.rafal.exception.UserDoesNotExistException;
 import com.kulesza.rafal.exception.UserIsNotUniqueException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -26,3 +27,10 @@ public class UserControllerAdvice {
         return ResponseEntity.badRequest()
                 .body("Given username already exist.");
     }
+
+    @ExceptionHandler(UserDoesNotExistException.class)
+    public ResponseEntity<String> handleUserDoesNotExistsException() {
+        return ResponseEntity.badRequest()
+                .body("User does not exist.");
+    }
+}
