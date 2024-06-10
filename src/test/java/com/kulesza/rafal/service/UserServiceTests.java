@@ -1,6 +1,7 @@
 package com.kulesza.rafal.service;
 
 import com.kulesza.rafal.exception.InvalidUserDataException;
+import com.kulesza.rafal.exception.UserDoesNotExistException;
 import com.kulesza.rafal.exception.UserIsNotUniqueException;
 import com.kulesza.rafal.model.Gender;
 import com.kulesza.rafal.model.User;
@@ -13,6 +14,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -116,4 +120,26 @@ public class UserServiceTests {
         Throwable exception = assertThrows(UserIsNotUniqueException.class, () -> userService.createUser(user));
         // THEN
         assertThat(exception).isInstanceOf(UserIsNotUniqueException.class);
+    }
+
+    @Test
+    void getting_user_by_id_should_return_not_null_user() {
+        // GIVEN
+        String uuid = "4e618c9d-dc98-4a15-97a7-5d66570f1ff1";
+        // WHEN
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(new User()));
+        User user = userService.getUser(uuid);
+        // THEN
+        assertThat(user).isNotNull();
+    }
+
+    @Test
+    void getting_not_existing_user_by_id_should_return_null() {
+        // GIVEN
+        String uuid = "4e618c9d-dc98-4a15-97a7-5d66570f1ff1";
+        // WHEN
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.empty());
+        Throwable exception = assertThrows(UserDoesNotExistException.class, () -> userService.getUser(uuid));
+        // THEN
+        assertThat(exception).isInstanceOf(UserDoesNotExistException.class);
     }
