@@ -143,3 +143,60 @@ public class UserServiceTests {
         // THEN
         assertThat(exception).isInstanceOf(UserDoesNotExistException.class);
     }
+
+    @Test
+    void updating_user_should_return_response_message_about_success() {
+        // GIVEN
+        User user = new User();
+        String uuid = "4e618c9d-dc98-4a15-97a7-5d66570f1ff1";
+
+        user.setUsername("Janek");
+        user.setAge(33);
+        user.setGender(Gender.MAN);
+        // WHEN
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(user));
+        String responseMessage = userService.updateUser(user, uuid);
+        // THEN
+        assertThat(responseMessage).isEqualTo("User is updated successfully");
+    }
+
+    @Test
+    void updating_user_should_should_update_user_data() {
+        // GIVEN
+        User user = new User();
+        String uuid = "4e618c9d-dc98-4a15-97a7-5d66570f1ff1";
+
+        user.setUsername("Janek");
+        user.setAge(33);
+        user.setGender(Gender.MAN);
+        // WHEN
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(user));
+        String responseMessage = userService.updateUser(createUserForUpdate(), uuid);
+        // THEN
+        assertThat(responseMessage).isEqualTo("User is updated successfully");
+        assertThat(user.getUsername()).isEqualTo("Janek");
+        assertThat(user.getAge()).isEqualTo(22);
+        assertThat(user.getGender()).isEqualTo(Gender.WOMAN);
+    }
+
+    private User createUserForUpdate() {
+        User user = new User();
+
+        user.setUsername("Alicja");
+        user.setAge(22);
+        user.setGender(Gender.WOMAN);
+
+        return user;
+    }
+
+    @Test
+    void attempting_to_delete_not_existing_user_should_throw_exception() {
+        // GIVEN
+        String uuid = "4e618c9d-dc98-4a15-97a7-5d66570f1ff1";
+        // WHEN
+        when(userRepository.existsById(UUID.fromString(uuid))).thenReturn(false);
+        Throwable exception = assertThrows(UserDoesNotExistException.class, () -> userService.deleteUser(uuid));
+        // THEN
+        assertThat(exception).isInstanceOf(UserDoesNotExistException.class);
+    }
+}
