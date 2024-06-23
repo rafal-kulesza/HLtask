@@ -20,7 +20,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTests {
@@ -163,20 +163,21 @@ public class UserServiceTests {
     @Test
     void updating_user_should_should_update_user_data() {
         // GIVEN
-        User user = new User();
+        User existingUser = new User();
         String uuid = "4e618c9d-dc98-4a15-97a7-5d66570f1ff1";
 
-        user.setUsername("Janek");
-        user.setAge(33);
-        user.setGender(Gender.MAN);
+        existingUser.setUsername("Janek");
+        existingUser.setAge(33);
+        existingUser.setGender(Gender.MAN);
         // WHEN
-        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(user));
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(existingUser));
         String responseMessage = userService.updateUser(createUserForUpdate(), uuid);
         // THEN
+        verify(userRepository, times(1)).save(existingUser);
         assertThat(responseMessage).isEqualTo("User is updated successfully");
-        assertThat(user.getUsername()).isEqualTo("Janek");
-        assertThat(user.getAge()).isEqualTo(22);
-        assertThat(user.getGender()).isEqualTo(Gender.WOMAN);
+        assertThat(existingUser.getUsername()).isEqualTo("Janek");
+        assertThat(existingUser.getAge()).isEqualTo(22);
+        assertThat(existingUser.getGender()).isEqualTo(Gender.WOMAN);
     }
 
     private User createUserForUpdate() {
