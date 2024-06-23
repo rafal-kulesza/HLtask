@@ -62,7 +62,7 @@ public class UserService {
 
         existingUser.setAge(user.getAge());
         existingUser.setGender(user.getGender());
-        userRepository.save(user);
+        userRepository.save(existingUser);
 
         return "User is updated successfully";
     }
